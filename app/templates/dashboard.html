@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="icon" href="https://www.pngrepo.com/png/227367/170/fried-potatoes-french-fries.png">
+    <title>Welcome!</title>
+    <style>
+        /* Set the size of the div element that contains the map */
+        #map {
+            height: 700px;
+            /* The height is 400 pixels */
+            width: 80%;
+            /* The width is the width of the web page */
+            box-shadow: red 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <a class="navbar-brand" href="#">Welcome {{user.first_name}} {{user.last_name}}!</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
+            aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/success">Home<span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/favorites/{{user.id}}">Favorites</a>
+                </li>
+            </ul>
+            <a class="button" onclick="getLocation()" style="margin-right: 10px;;">Get
+                Location</a>
+            <a class="btn btn-outline-success my-2 my-sm-0" href="/logout">Logout</a>
+        </div>
+    </nav>
+    <p id="demo"></p>
+    <div class="container">
+        <div class="row">
+            <div class="col" style="font-family: 'Arial Narrow', Arial, sans-serif; font-size: 16pt;">
+                Around You &#8628;
+            </div>
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col4">
+                <button onclick="make_suggestion()" style="margin-bottom: 5px; " class="btn btn-primary" id="scroll"
+                    href="#results">Food</button>
+                <button onclick="make_suggestion_drinks()" style="margin-bottom: 5px; margin-left:2px;"
+                    class="btn btn-primary" id="scroll" href="#results">Just Drinks</button>
+                <a id='random' href="/random/{{lat}}/{{long}}" style="margin-bottom: 5px; margin-left:2px "
+                    class="btn btn-primary">Decide for
+                    Me</a>
+            </div>
+        </div>
+    </div>
+    <!--The div element for the map -->
+    <div class="d-flex justify-content-around">
+        <div id="map"></div>
+    </div>
+    <!--Load the API from the specified URL
+    * The async attribute allows the browser to render the page while the API loads
+    * The key parameter will contain your own API key (which is not needed for this tutorial)
+    * The callback parameter executes the initMap() function
+    -->
+    <div id="results" style="background-color:transparent; margin: 0px 65px;">
+    </div>
+    <button onclick="topFunction()" id="myBtn" title="Go to top">Top</button>
+
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCoYHMYb4FBGkw3nQzqIY5MmGeBnrkrMDI&callback=initMap">
+        </script>
+
+    <div class="inner" style="text-align: center; margin-top: 150px;">
+        <h5 style="font-size: 12pt;">Click on the "Get Location" button to get started! | Site by Chris Giang</h5>
+    </div>
+</body>
+
+<script>
+    //Get the button:
+    mybutton = document.getElementById("myBtn");
+
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function () { scrollFunction() };
+
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            mybutton.style.display = "block";
+        } else {
+            mybutton.style.display = "none";
+        }
+    }
+
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+    var x = document.getElementById("demo");
+    var long = 0;
+    var lat = 0;
+    function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition);
+        }
+        else {
+            x.innerHTML = "Geolocation is not supported by this browser.";
+        }
+    }
+    function showPosition(position) {
+        x.innerHTML = "Latitude: " + position.coords.latitude + "<br>Longitude: " + position.coords.longitude;
+        lat = position.coords.latitude;
+        long = position.coords.longitude;
+        var z = document.getElementById('random');
+        z.href = `/random/${lat}/${long}`
+        return initMap(this.long, this.lat)
+    }
+    // Initialize and add the map
+    function initMap(long = 0, lat = 0) {
+        console.log(lat, long)
+        // Your Location
+        var current_location = { lat: lat, lng: long };
+        // The map, centered at your location
+        var map = new google.maps.Map(
+            document.getElementById('map'), { zoom: 15, center: current_location });
+        // The marker, positioned at your location
+        var marker = new google.maps.Marker({ position: current_location, map: map });
+    }
+    // Gets a Yelp Restaurant using keyword FOOD and Long/Lat
+
+    function make_suggestion() {
+        var lat = this.lat;
+        var long = this.long;
+        var myurl = "https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses/search?term=food&latitude=" + this.lat + "&longitude=" + this.long + "&limit=20&radius=1500";
+        $.ajax({
+            url: myurl,
+            headers: {
+                'Authorization': 'Bearer hqNC6-38oblTgENX-snoVNZ_lzBFzAhfInxMbnLLxBK5RoBWSWuU85MF65zvly-kEP0VM0oEqhciGGNJ4M1_amSEnIUg1UCa5JUEGa5HqlBNkPKc4HsQOQoGEFQvXnYx',
+            },
+            method: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                // Grab the results from the API JSON return
+                var totalresults = data.total;
+                // If our results are greater than 0, continue
+                if (totalresults > 0) {
+                    // Display a header on the page with the number of results
+                    $('#results').append('<h5 style="margin-top: 12px; margin-left: 15px;">Top Spots Near You! Out of ' + totalresults + ' results!</h5>');
+                    // Itirate through the JSON array of 'businesses' which was returned by the API
+                    $.each(data.businesses, function (i, item) {
+                        // Store each business's object in a variable
+                        var id = item.id;
+                        var alias = item.alias;
+                        var phone = item.display_phone;
+                        var image = item.image_url;
+                        var name = item.name;
+                        var formatted_name = item.name.split(' ').join('_')
+                        var formatted_url = item.url
+                        var rating = item.rating;
+                        var reviewcount = item.review_count;
+                        var address = item.location.address1;
+                        var city = item.location.city;
+                        var state = item.location.state;
+                        var zipcode = item.location.zip_code;
+                        var google_directions = 'https://www.google.com/maps/dir/?api=1&origin=' + lat + ',' + long + '&destination=' + formatted_name;
+                        // Append our result into our page
+                        $('#results').append('<div class="my-3 p-3 rounded box-shadow" style="background:transparent"><div id="' + id + '"><h6 class="border-bottom border-gray pb-2 mb-0"></h6><div class="media text-muted pt-3"><img src="' + image + '" alt="32x32" class="mr-2 rounded" style="width: 100px; height: 100px;" data-holder-rendered="true"><p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray" style="height:100px;"><strong class="d-block text-gray-dark"><a href="' + formatted_url + '" target="_blank">' + name + '</a></strong>' + address + ', ' + city + ', ' + state + ', ' + zipcode + ' <br>' + phone + '</br><br>This business has a rating of ' + rating + ' with ' + reviewcount + ' reviews.</p></div><div><button type="button" class="btn btn-outline-primary" style="margin-top:5px;"><a href="' + google_directions + '" target="_blank">Take Me There!</a></button><button type="button" class="btn btn-outline-primary" style="margin-top:5px; margin-left: 5px;"><a href="/favorite/' + id + '">Add to Favorites</a></button></div></div>');
+                    });
+
+                } else {
+                    // If our results are 0; no businesses were returned by the JSON therefor we display on the page no results were found
+                    $('#results').append('<h5>We discovered no results!</h5>');
+                }
+            }
+        });
+    }
+    function make_suggestion_drinks() {
+        var lat = this.lat;
+        var long = this.long;
+        var myurl = "https://cors-anywhere.herokuapp.com/https://api.yelp.com/v3/businesses/search?term=drinks&latitude=" + this.lat + "&longitude=" + this.long + "&limit=20&radius=1500";
+        $.ajax({
+            url: myurl,
+            headers: {
+                'Authorization': 'Bearer hqNC6-38oblTgENX-snoVNZ_lzBFzAhfInxMbnLLxBK5RoBWSWuU85MF65zvly-kEP0VM0oEqhciGGNJ4M1_amSEnIUg1UCa5JUEGa5HqlBNkPKc4HsQOQoGEFQvXnYx',
+            },
+            method: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                // Grab the results from the API JSON return
+                var totalresults = data.total;
+                // If our results are greater than 0, continue
+                if (totalresults > 0) {
+                    // Display a header on the page with the number of results
+                    $('#results').append('<h5 style="margin-top: 12px; margin-left: 15px;">Top Spots Near You! Out of ' + totalresults + ' results!</h5>');
+                    // Itirate through the JSON array of 'businesses' which was returned by the API
+                    $.each(data.businesses, function (i, item) {
+                        // Store each business's object in a variable
+                        var id = item.id;
+                        var alias = item.alias;
+                        var phone = item.display_phone;
+                        var image = item.image_url;
+                        var name = item.name;
+                        var formatted_name = item.name.split(' ').join('_')
+                        var formatted_url = item.url
+                        var rating = item.rating;
+                        var reviewcount = item.review_count;
+                        var address = item.location.address1;
+                        var city = item.location.city;
+                        var state = item.location.state;
+                        var zipcode = item.location.zip_code;
+                        var google_directions = 'https://www.google.com/maps/dir/?api=1&origin=' + lat + ',' + long + '&destination=' + formatted_name;
+                        // Append our result into our page
+                        $('#results').append('<div class="my-3 p-3 rounded box-shadow" style="background:transparent"><div id="' + id + '"><h6 class="border-bottom border-gray pb-2 mb-0"></h6><div class="media text-muted pt-3"><img src="' + image + '" alt="32x32" class="mr-2 rounded" style="width: 100px; height: 100px;" data-holder-rendered="true"><p class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray" style="height:100px;"><strong class="d-block text-gray-dark"><a href="' + formatted_url + '" target="_blank">' + name + '</a></strong>' + address + ', ' + city + ', ' + state + ', ' + zipcode + ' <br>' + phone + '</br><br>This business has a rating of ' + rating + ' with ' + reviewcount + ' reviews.</p></div><div><button type="button" class="btn btn-outline-primary" style="margin-top:5px;"><a href="' + google_directions + '" target="_blank">Take Me There!</a></button><button type="button" class="btn btn-outline-primary" style="margin-top:5px; margin-left: 5px;"><a href="/favorite/' + id + '">Add to Favorites</a></button></div></div>');
+                    });
+
+                } else {
+                    // If our results are 0; no businesses were returned by the JSON therefor we display on the page no results were found
+                    $('#results').append('<h5>We discovered no results!</h5>');
+                }
+            }
+        });
+    }
+
+</script>
+
+</html>

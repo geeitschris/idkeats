@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="google-signin-client_id"
+        content="674059472588-8np3p47j0vav1996l0mcs976m9oepp0k.apps.googleusercontent.com">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <title>Login & Registration</title>
+</head>
+
+<body>
+    <div class="container" style="margin-top: 50px;">
+        <div class="row justify-content-md-center">
+            <div class="col col-lg-2">
+                <form action='/createuser' method="POST">
+                    {%csrf_token%}
+                    <div class="form-group">
+                        <label for="formGroupExampleInput">First Name</label>
+                        <input type="text" class="form-control" id="formGroupExampleInput" placeholder="First Name"
+                            name='first_name'>
+                    </div>
+                    <div class="form-group">
+                        <label for="formGroupExampleInput2">Last Name</label>
+                        <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Last Name"
+                            name='last_name'>
+                    </div>
+                    <div class="form-group">
+                        <label for="formGroupExampleInput2">E-Mail</label>
+                        <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="E-Mail"
+                            name='email'>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputPassword1">Password</label>
+                        <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password"
+                            name='password'>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputPassword1">Confirm Password</label>
+                        <input type="password" class="form-control" id="exampleInputPassword1"
+                            placeholder="Confirm Password" name="cpassword">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Register</button>
+                </form>
+            </div>
+            <div class="col-md-auto">
+                {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li {% if message.tags %} class="{{ message.tags }}" style="color: red;" {% endif %}>{{ message }}
+                    </li>
+                    {% endfor %}
+                </ul>
+                {%endif%}
+            </div>
+            <div class="col col-lg-2">
+                <form action='/login' method="POST">
+                    {%csrf_token%}
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Email address</label>
+                        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+                            name='email'>
+                        <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone
+                            else.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputPassword1">Password</label>
+                        <input type="password" class="form-control" id="exampleInputPassword1" name='password'>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script src="https://apis.google.com/js/platform.js" async defer></script>
+
+</html>

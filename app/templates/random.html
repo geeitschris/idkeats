@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="icon" href="https://www.pngrepo.com/png/227367/170/fried-potatoes-french-fries.png">
+    <link rel="stylesheet" href="../static/css/animate.css">
+    <link rel="stylesheet" href="../static/css/flexslider.css">
+    <link rel="stylesheet" href="../static/fonts/icomoon/style.css">
+
+    <link rel="stylesheet" href="../static/css/bootstrap.css">
+    <link rel="stylesheet" href="../static/css/style.css">
+
+    <link href="https://fonts.googleapis.com/css?family=Nunito+Sans:200,300,400,700" rel="stylesheet">
+    <title>Random!</title>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <a class="navbar-brand" href="#">Welcome {{user.first_name}} {{user.last_name}}!</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
+            aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/success">Home</a>
+                </li>
+                <li>
+                    <a class="nav-link" href="/favorites/{{user.id}}">Favorites<span
+                            class="sr-only">(current)</span></a>
+                </li>
+            </ul>
+
+            <a class="btn btn-outline-success my-2 my-sm-0" href="/logout">Logout</a>
+        </div>
+    </nav>
+    <div class="row intro-text align-items-center justify-content-center">
+        <div class="col-md-10 text-center">
+            <h1>Your Favorites!</h1>
+            <div class="row mb-2" style="justify-content: center;">
+                <div class="col-md-6">
+                    <div class="card flex-md-row mb-4 box-shadow h-md-250" style="margin-top: 100px;">
+                        <div class="card-body d-flex flex-column align-items-start">
+                            <h3 class="mb-0">
+                                <a href="{{pick.url}}" target="_blank">{{pick.name}}</a>
+                            </h3>
+                            <div class=" mb-1 text-muted" style="margin-top: 5px;">{{pick.location.address1}},
+                                {{pick.location.city}},
+                                {{pick.location.state}}
+                                <p>Phone: {{pick.display_phone}}</p>
+                            </div>
+                            <p class="card-text mb-auto">Rating: {{pick.rating}} out of {{pick.review_count}}
+                                reviews</p>
+                            <div class="row">
+                                <div class="col">
+                                    <a class="btn btn-outline-primary" style="margin-top:5px;"
+                                        href="'https://www.google.com/maps/dir/?api=1&origin={{lat}},{{lng}}&destination={{pick.name}}"
+                                        target="_blank">Directions Please!</a>
+                                    <a class="btn btn-outline-primary" style="margin-top:5px; margin-left: 5px;"
+                                        href="/favorite/{{pick.id}}">Add to
+                                        Favorites</a>
+                                </div>
+                            </div>
+                        </div>
+                        <img class="card-img-right flex-auto d-none d-md-block" data-src="holder.js/200x250?theme=thumb"
+                            alt="Thumbnail [200x250]" style="width: 200px; height: 250px;" src={{pick.image_url}}
+                            data-holder-rendered="true">
+                    </div>
+                    <a class="btn btn-warning" style="margin-top:5px; margin-left: 5px; box-shadow: 5px;"
+                        href="/random/{{lat}}/{{long}}">That place looks jank, take me somewhere else.</a>
+                </div>
+            </div>
+            <button onclick="topFunction()" id="myBtn" title="Go to top">Top</button>
+        </div>
+    </div>
+</body>
+
+</html>
