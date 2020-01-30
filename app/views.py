@@ -61,6 +61,8 @@ def login(request):
         if bcrypt.checkpw(request.POST['password'].encode(), logged_user.password.encode()):
             request.session['userid'] = logged_user.id
             return redirect('/success')
+    else:
+        errors['no_user'] = "Invalid Credentials"
     for k, v in errors.items():
         messages.error(request, v)
     return redirect('/')
