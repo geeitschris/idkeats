@@ -63,7 +63,7 @@ def login(request):
             return redirect('/success')
     for k, v in errors.items():
         messages.error(request, v)
-    return render(request, 'login.html')
+    return redirect('/')
 
 
 def logout(request):
