@@ -39,13 +39,14 @@
                     <a class="nav-link" href="/favorites/{{user.id}}">Favorites</a>
                 </li>
             </ul>
-            <a class="button" onclick="getLocation()" style="margin-right: 10px;;">Get
+            <!-- <a class="button" onclick="getLocation()" style="margin-right: 10px;;">Get -->
+            <a class="button" onclick="showPosition()" style="margin-right: 10px;;">Get
                 Location</a>
             <a class="btn btn-outline-success my-2 my-sm-0" href="/logout">Logout</a>
         </div>
     </nav>
     <p id="demo"></p>
-    <div class="container">
+    <div class="container" style="margin-top: 60px;">
         <div class="row">
             <div class="col" style="font-family: 'Arial Narrow', Arial, sans-serif; font-size: 16pt;">
                 Around You &#8628;
@@ -112,21 +113,31 @@
     var x = document.getElementById("demo");
     var long = 0;
     var lat = 0;
-    function getLocation() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(showPosition);
+    // DEPRECATED ON HTTP SITES
+    // function getLocation() {
+    //     if (navigator.geolocation) {
+    //         navigator.geolocation.getCurrentPosition(showPosition);
+    //     }
+    //     else {
+    //         x.innerHTML = "Geolocation is not supported by this browser.";
+    //     }
+    // }
+    function showPosition() {
+        // x.innerHTML = "Latitude: " + position.coords.latitude + "<br>Longitude: " + position.coords.longitude;
+        $.ajax({
+            url: 'http://ip-api.com/json/',
+            method: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                lat = data.lat;
+                long = data.lon;
+                console.log(lat, long)
+                var z = document.getElementById('random');
+                z.href = `/random/${lat}/${long}`
+                return initMap(long, lat)
+            }
         }
-        else {
-            x.innerHTML = "Geolocation is not supported by this browser.";
-        }
-    }
-    function showPosition(position) {
-        x.innerHTML = "Latitude: " + position.coords.latitude + "<br>Longitude: " + position.coords.longitude;
-        lat = position.coords.latitude;
-        long = position.coords.longitude;
-        var z = document.getElementById('random');
-        z.href = `/random/${lat}/${long}`
-        return initMap(this.long, this.lat)
+        )
     }
     // Initialize and add the map
     function initMap(long = 0, lat = 0) {
