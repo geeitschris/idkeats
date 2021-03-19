@@ -6,7 +6,7 @@ certifi==2019.11.28
 cffi==1.13.2
 chardet==3.0.4
 colorama==0.4.0
-Django==2.2
+Django==2.2.18
 future==0.18.2
 idna==2.8
 isort==4.3.4
